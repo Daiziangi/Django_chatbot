@@ -9,12 +9,12 @@ from .models import Chat
 from django.utils import timezone
 
 
-openai_api_key = 'input-your-key'
+openai_api_key = 'sk-wCTF9hG5g6h4lyU6COKEQP0WwRRsXowkaiXPtbmGX5iw6UBa'
 openai.api_key = openai_api_key
 
 def ask_openai(message):
     response = openai.ChatCompletion.create(
-        model = "gpt-4",
+        model = "gpt-3.5-turbo", #gpt-3.5-turbo
         messages=[
             {"role": "system", "content": "You are an helpful assistant."},
             {"role": "user", "content": message},
