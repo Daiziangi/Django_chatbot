@@ -16,10 +16,15 @@ from django.http import HttpResponse
 #         # 如果请求失败，返回适当的错误消息
 #         return HttpResponse("Failed to fetch image", status=response.status_code)
 
+
 def proxy_image(request, image_url):
     # 构造图片请求
     response = requests.get(image_url)
-
+    print("!!!!!!!!!!!!!!!")
+    print(request)
+    print("\n")
+    print(response)
+    print("\n")
     # 检查请求是否成功
     if response.status_code == 200:
         # 获取图片的内容类型
@@ -30,3 +35,24 @@ def proxy_image(request, image_url):
     else:
         # 如果请求失败，返回错误信息
         return HttpResponse('Failed to fetch image', status=response.status_code)
+    
+
+# def proxy_image(request):
+#     # 从请求中获取image_url
+#     image_url = request.path.replace('/image/', '', 1)
+#     print(image_url)
+#     print("\n")
+#     # 构造图片请求
+#     response = requests.get(image_url)
+#     print(response)
+#     print("\n")
+#     # 检查请求是否成功
+#     if response.status_code == 200:
+#         # 获取图片的内容类型
+#         content_type = response.headers.get('Content-Type', 'image/jpeg')
+        
+#         # 返回图片内容给前端
+#         return HttpResponse(response.content, content_type=content_type)
+#     else:
+#         # 如果请求失败，返回错误信息
+#         return HttpResponse('Failed to fetch image', status=response.status_code)

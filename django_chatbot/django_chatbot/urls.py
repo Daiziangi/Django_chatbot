@@ -15,9 +15,16 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from image_proxy.views import proxy_image
+from django.conf import settings
+from django.conf.urls.static import static
+
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('chatbot.urls')),
+    path('chat/', include('chatbot.urls')),
     path('image/', include('image_proxy.urls')),
+    path('',include('chatbot.urls'))
 ]
+
+
+# 添加用于提供媒体文件的 URL 配置
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

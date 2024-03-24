@@ -11,9 +11,15 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 from pathlib import Path
-
+import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+
+#用户生成的图片存放的地方
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 
 
 # Quick-start development settings - unsuitable for production
@@ -39,11 +45,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'chatbot',
     'image_proxy',
-    # 'corsheaders', #允许跨域访问的APP
+    'corsheaders', #允许跨域访问的APP
 ]
 
 MIDDLEWARE = [
-    # 'corsheaders.middleware.CorsMiddleware', #允许其他网站跨域访问我的域名内容的中间件
+    'corsheaders.middleware.CorsMiddleware', #允许其他网站跨域访问我的域名内容的中间件
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -53,12 +59,12 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# CORS_ALLOW_ALL_ORIGINS = True #允许跨域访问
+CORS_ALLOW_ALL_ORIGINS = True #允许跨域访问
 #用于允许其他域名跨域访问我的域名资源
-# CORS_ALLOWED_ORIGINS = [
-#     "https://sfile.chatglm.cn",
-#     # 其他允许的域名...
-# ]
+CORS_ALLOWED_ORIGINS = [
+    "https://sfile.chatglm.cn",
+    # 其他允许的域名...
+]
 
 
 ROOT_URLCONF = 'django_chatbot.urls'
@@ -115,9 +121,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'zh-Hans'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Shanghai'
 
 USE_I18N = True
 

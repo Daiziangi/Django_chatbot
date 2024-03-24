@@ -1,5 +1,4 @@
 {% extends 'base.html' %}
-
 {% block styles %}
 <style>
     body, html {
@@ -60,50 +59,42 @@
       display: flex;
       flex-direction: column;
     }
-    img {
+    .img {
             max-width: 300px; /* 最大宽度为 300px */
             height: auto; /* 高度自动调整 */
         }
   </style>
 {% endblock %}
 
+{% load static %}
 
 {% block content %}
 <div class="chat-container">
   <div class="card flex-grow-1">
     <div class="card-header bg-primary text-white">Chat</div>
     {% if user.is_authenticated %}
-    <div class="card-header bg-primary text-white"><b>Welcome, {{user.username}}</b>   <a style="color: yellow;" href="logout">Logout</a></div>
+    <div class="card-header bg-primary text-white"><b>Welcome, {{user.username}}</b>   <a style="color: yellow;" href="/chat/logout">Logout</a></div>
     {% else %}
-    <div class="card-header bg-primary text-white"><a style="color: yellow" href="login">Login</a>   <a style="color: yellow;" href="register">Register</a></div>
+    <div class="card-header bg-primary text-white"><a style="color: yellow" href="/chat/login">Login</a>   <a style="color: yellow;" href="/chat/register">Register</a></div>
     {% endif %}
     <div class="card-body messages-box">
       
       <ul class="list-unstyled messages-list">
-        <!-- <li class="message received">
-          <div class="message-text">
-            <div class="message-sender">
-              <b>AI Chatbot</b>
-            </div>
-            <div class="message-content">
-              Hi {{user.username}}, I am your AI Chatbot, you can ask me anything.
-            </div>
-          </div>
-        </li> -->
 
         {% for chat in chats %}
           {% if chat.user == request.user %}
 
-            <li class="message sent">
+        <li class="message sent">
           <div class="message-text">
             <div class="message-sender">
-              <b>You</b>
+              <!-- <b>You</b> -->
+              <b>{{ chat.user }}</b>
             </div>
             <div class="message-content">
               {{chat.message}}
             </div>
-            <div>
-            </div>
+            <!-- <div>
+            </div> -->
           </div>
         </li>
 
@@ -114,15 +105,11 @@
             </div>
             <div class="message-content">
               {{chat.response}}
-              <!-- {% if chat.image_url %} -->
-              <!-- 在这里插入图片 -->
-              <!-- <img src="http://localhost:8000/image/{{ chat.image_url }}" alt="Image"> -->
-              <img src="https://sfile.chatglm.cn/testpath/56fa3ba0-2b0c-5fa9-bbf2-4e423bc61bfd_0.png" alt="Test Image">
-              <!-- 为什么静态页面这两个img可以显示,而在runserver后的页面里不会显示出来? -->
-              <!-- <img src="https://sfile.chatglm.cn/testpath/56fa3ba0-2b0c-5fa9-bbf2-4e423bc61bfd_0.png" alt="Test Image"> -->
-              <!-- <img src="/image/https://sfile.chatglm.cn/testpath/b5f038ab-474d-50ac-bc6b-496c04d36df5_0.png" alt="Proxied Image"> -->
-              <img src="http://localhost:8000/image/https://sfile.chatglm.cn/testpath/b5f038ab-474d-50ac-bc6b-496c04d36df5_0.png" alt="Image">
-              <!-- {% endif %} -->
+              <img src="{{ chat.image_content.url }}" alt=" testImage">
+              <!-- <img src="{{ MEDIA_URL }}{{ chat.image_url }}" alt="Test Image"> -->
+              <!-- 测试chat.image_url具体值 -->
+              {{ chat.image_content.url }}  
+              <!-- 仍然无效，无法显示图片。  即使把base删光,仍然会在f12中看到原来那些的js代码 -->
             </div>
           </div>
         </li>
@@ -137,10 +124,12 @@
     <br><br>
     <br><br>
   </div>
-  <form class="message-form">
-    {%csrf_token%}
+
+
+  <form class="message-form" method="post" action="{% url 'handle_message' %} ">
+    {% csrf_token %}
     <div class="input-group">
-      <input type="text" class="form-control message-input" placeholder="Type your message...">
+      <input type="text" class="form-control message-input" name="message" placeholder="Type your message...">
       <div class="input-group-append">
         <button type="submit" class="btn btn-primary btn-send">发送</button>
       </div>
@@ -148,67 +137,4 @@
   </form>
 </div>
 
-<script>
-  const messagesList = document.querySelector('.messages-list');
-  const messageForm = document.querySelector('.message-form');
-  const messageInput = document.querySelector('.message-input');
-
-  messageForm.addEventListener('submit', (event) => {
-    event.preventDefault();
-
-    const message = messageInput.value.trim();
-    if (message.length === 0) {
-      return;
-    }
-
-    const messageItem = document.createElement('li');
-    messageItem.classList.add('message', 'sent');
-    messageItem.innerHTML = `
-        <div class="message-text">
-            <div class="message-sender">
-                <b>You</b>
-            </div>
-            <div class="message-content">
-                ${message}
-            </div>
-        </div>`;
-    messagesList.appendChild(messageItem);
-
-    messageInput.value = '';
-
-    fetch('', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams({
-        'csrfmiddlewaretoken': document.querySelector('[name=csrfmiddlewaretoken]').value,
-        'message': message
-      })
-    })
-      .then(response => response.json())
-      .then(data => {
-        const response = data.response;
-        const messageItem = document.createElement('li');
-        messageItem.classList.add('message', 'received');
-        messageItem.innerHTML = `
-        <div class="message-text">
-            <div class="message-sender">
-              <b>AI Chatbot</b>
-            </div>
-            <div class="message-content">
-                ${response}
-            </div>
-        </div>
-          `;
-          if (data.image_url) {
-          // 如果有图片URL，则创建图片元素并插入到消息内容中
-          const imageElement = document.createElement('img');
-          imageElement.src = data.image_url;
-          imageElement.alt = 'Image';
-          messageItem.querySelector('.message-content').appendChild(imageElement);
-        }
-        messagesList.appendChild(messageItem);
-      });
-  });
-
-</script>
 {% endblock %}
