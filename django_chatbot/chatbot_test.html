@@ -114,15 +114,11 @@
             </div>
             <div class="message-content">
               {{chat.response}}
-              <!-- {% if chat.image_url %} -->
+              {% if chat.image_url %}
               <!-- 在这里插入图片 -->
-              <!-- <img src="http://localhost:8000/image/{{ chat.image_url }}" alt="Image"> -->
+              <img src="{{ chat.image_url }}" alt="Image">
               <img src="https://sfile.chatglm.cn/testpath/56fa3ba0-2b0c-5fa9-bbf2-4e423bc61bfd_0.png" alt="Test Image">
-              <!-- 为什么静态页面这两个img可以显示,而在runserver后的页面里不会显示出来? -->
-              <!-- <img src="https://sfile.chatglm.cn/testpath/56fa3ba0-2b0c-5fa9-bbf2-4e423bc61bfd_0.png" alt="Test Image"> -->
-              <!-- <img src="/image/https://sfile.chatglm.cn/testpath/b5f038ab-474d-50ac-bc6b-496c04d36df5_0.png" alt="Proxied Image"> -->
-              <img src="http://localhost:8000/image/https://sfile.chatglm.cn/testpath/b5f038ab-474d-50ac-bc6b-496c04d36df5_0.png" alt="Image">
-              <!-- {% endif %} -->
+              {% endif %}
             </div>
           </div>
         </li>
@@ -142,7 +138,7 @@
     <div class="input-group">
       <input type="text" class="form-control message-input" placeholder="Type your message...">
       <div class="input-group-append">
-        <button type="submit" class="btn btn-primary btn-send">发送</button>
+        <button type="submit" class="btn btn-primary btn-send">Send</button>
       </div>
     </div>
   </form>

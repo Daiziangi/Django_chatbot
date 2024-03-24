@@ -15,8 +15,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-
+from image_proxy.views import proxy_image
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('chatbot.urls'))
+    path('', include('chatbot.urls')),
+    path('image/', include('image_proxy.urls')),
 ]

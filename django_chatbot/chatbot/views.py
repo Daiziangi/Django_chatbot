@@ -18,8 +18,6 @@ SECRET_KEY = "ZdRKOqJzMEr5pZmJJnnmv29xcYkfAr2X"
 def baidu_chat(message):
         
     url = "https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/ernie-speed-128k?access_token=" + get_access_token()
-    # message = input() #输入
-    # message = "你好" #输入
     payload = json.dumps({
         "messages": [
             {
@@ -35,9 +33,9 @@ def baidu_chat(message):
     
     response = requests.request("POST", url, headers=headers, data=payload)
     
-    print(response.text)
+    # print(response.text)
     res = response.json()["result"]
-    print(res)
+    # print(res)
     return res
 
 def get_access_token():
@@ -60,10 +58,13 @@ def chatbot(request):
     if request.method == 'POST':
         message = request.POST.get('message')
         response = ask_baidu(message)
-
-        chat = Chat(user=request.user, message=message, response=response, created_at=timezone.now())
+        t2imag_baidu2ali = response
+        t2imag_ali2zhipu = call_with_messages(t2imag_baidu2ali)
+        image_url = zhipu(t2imag_ali2zhipu)
+        chat = Chat(user=request.user, message=message, response=response, image_url=image_url,created_at=timezone.now())
         chat.save()
-        return JsonResponse({'message': message, 'response': response})
+        print("Image URL:", chat.image_url)
+        return JsonResponse({'message': message, 'response': response,'image_url':image_url})
     return render(request, 'chatbot.html', {'chats': chats})
 
 
@@ -91,6 +92,56 @@ def chatbot(request):
         chat.save()
         return JsonResponse({'message': message, 'response': response})
     return render(request, 'chatbot.html', {'chats': chats})
+
+
+
+
+
+import random
+from http import HTTPStatus
+import dashscope
+import json
+dashscope.api_key='sk-4f29b919bd594f2d9d89044babe48a38'
+#定义阿里云API制成的文生图prompt适配器
+def call_with_messages(message):
+    messages = [{'role': 'system', 'content': """你是一个文生图的prompt适配器,接下来我会将中国古代文化内容传递给你,你需要从中提取出可以形象化表现我传递于你的内容的文生图prompt,并只返回给我对应的prompt.
+                 (如果发给你的是人物则要求能够画出其画像,如果是诗词语句则能够形象化地表现出其中的内容和场景). 请强烈注意,请直接返回给我对应用于文生图的prompt里的内容,不要包含其他任何东西(包括如'prompt'和'文生图prompt'的字样)"""},
+                {'role': 'user', 'content': message}]
+    response = dashscope.Generation.call(
+        "qwen-turbo",
+        messages=messages,
+        # set the random seed, optional, default to 1234 if not set
+        seed=random.randint(1, 10000),
+        # set the result to be "message" format.
+        result_format='message',
+    )
+    if response.status_code == HTTPStatus.OK:
+        # print(response)
+        pass
+    else:
+        print('Request id: %s, Status code: %s, error code: %s, error message: %s' % (
+            response.request_id, response.status_code,
+            response.code, response.message
+        ))
+    return response["output"]["choices"][0]["message"]["content"]
+
+
+
+
+
+from zhipuai import ZhipuAI
+def zhipu(ali_prompt):
+    client = ZhipuAI(api_key="752c820e46b49c524f1397eb4cb23728.0OM9RWz0OAK0uaxJ") # 请填写您自己的APIKey
+
+    response = client.images.generations(
+        model="cogview-3", #填写需要调用的模型名称
+        prompt=ali_prompt,
+    )
+    # print(response.data[0].url)
+    return response.data[0].url
+
+
+
 
 
 def login(request):

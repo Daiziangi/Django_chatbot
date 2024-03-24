@@ -60,10 +60,6 @@
       display: flex;
       flex-direction: column;
     }
-    img {
-            max-width: 300px; /* 最大宽度为 300px */
-            height: auto; /* 高度自动调整 */
-        }
   </style>
 {% endblock %}
 
@@ -80,6 +76,7 @@
     <div class="card-body messages-box">
       
       <ul class="list-unstyled messages-list">
+        
         <!-- <li class="message received">
           <div class="message-text">
             <div class="message-sender">
@@ -102,8 +99,6 @@
             <div class="message-content">
               {{chat.message}}
             </div>
-            <div>
-            </div>
           </div>
         </li>
 
@@ -114,15 +109,6 @@
             </div>
             <div class="message-content">
               {{chat.response}}
-              <!-- {% if chat.image_url %} -->
-              <!-- 在这里插入图片 -->
-              <!-- <img src="http://localhost:8000/image/{{ chat.image_url }}" alt="Image"> -->
-              <img src="https://sfile.chatglm.cn/testpath/56fa3ba0-2b0c-5fa9-bbf2-4e423bc61bfd_0.png" alt="Test Image">
-              <!-- 为什么静态页面这两个img可以显示,而在runserver后的页面里不会显示出来? -->
-              <!-- <img src="https://sfile.chatglm.cn/testpath/56fa3ba0-2b0c-5fa9-bbf2-4e423bc61bfd_0.png" alt="Test Image"> -->
-              <!-- <img src="/image/https://sfile.chatglm.cn/testpath/b5f038ab-474d-50ac-bc6b-496c04d36df5_0.png" alt="Proxied Image"> -->
-              <img src="http://localhost:8000/image/https://sfile.chatglm.cn/testpath/b5f038ab-474d-50ac-bc6b-496c04d36df5_0.png" alt="Image">
-              <!-- {% endif %} -->
             </div>
           </div>
         </li>
@@ -142,7 +128,7 @@
     <div class="input-group">
       <input type="text" class="form-control message-input" placeholder="Type your message...">
       <div class="input-group-append">
-        <button type="submit" class="btn btn-primary btn-send">发送</button>
+        <button type="submit" class="btn btn-primary btn-send">Send</button>
       </div>
     </div>
   </form>
@@ -199,13 +185,6 @@
             </div>
         </div>
           `;
-          if (data.image_url) {
-          // 如果有图片URL，则创建图片元素并插入到消息内容中
-          const imageElement = document.createElement('img');
-          imageElement.src = data.image_url;
-          imageElement.alt = 'Image';
-          messageItem.querySelector('.message-content').appendChild(imageElement);
-        }
         messagesList.appendChild(messageItem);
       });
   });

@@ -38,9 +38,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'chatbot',
+    'image_proxy',
+    # 'corsheaders', #允许跨域访问的APP
 ]
 
 MIDDLEWARE = [
+    # 'corsheaders.middleware.CorsMiddleware', #允许其他网站跨域访问我的域名内容的中间件
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -49,6 +52,14 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+# CORS_ALLOW_ALL_ORIGINS = True #允许跨域访问
+#用于允许其他域名跨域访问我的域名资源
+# CORS_ALLOWED_ORIGINS = [
+#     "https://sfile.chatglm.cn",
+#     # 其他允许的域名...
+# ]
+
 
 ROOT_URLCONF = 'django_chatbot.urls'
 
