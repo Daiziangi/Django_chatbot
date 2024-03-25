@@ -6,9 +6,9 @@ from django.contrib.auth.models import User
 from .models import Chat
 from django.utils import timezone
 
-import os
-from django.core.files.base import ContentFile
-import base64
+from django.views.decorators.cache import cache_page
+from django.utils.decorators import method_decorator
+from django.core.cache import cache
 
 
 import json
@@ -58,6 +58,15 @@ def ask_baidu(message):
     return dialog
 
 
+def get_latest_chats(request):
+    if request.user.is_authenticated:
+        chats = Chat.objects.filter(user=request.user).order_by('-created_at')[:10]  # 获取最新的10条聊天消息
+        chat_data = [{'user': chat.user.username, 'message': chat.message, 'response': chat.response, 'image_url': chat.image_url} for chat in chats]
+        return JsonResponse({'chats': chat_data})
+    else:
+        return JsonResponse({'error': 'User not authenticated'})
+
+@cache_page(60) # 缓存整个视图输出，缓存时间为60秒
 def chatbot(request):
     if request.user.is_authenticated:
         try:
@@ -72,8 +81,9 @@ def chatbot(request):
                 chat = Chat(user=request.user, message=message, response=response, image_url=image_url,created_at=timezone.now())
                 chat.save()
                 print("Image URL:", chat.image_url)
-                meta_refresh = '<meta http-equiv="refresh" content="45">'  # 提交表单后自动刷新页面，延迟时间为45秒
-                return JsonResponse({'message': message, 'response': response,'image_url':image_url,})
+                # meta_refresh = '<meta http-equiv="refresh" content="45">'  # 提交表单后自动刷新页面，延迟时间为45秒
+                chats = Chat.objects.filter(user=request.user)
+                return JsonResponse({'response': response,'image_url':image_url,}) 
             return render(request, 'chatbot.html', {'chats': chats})
         except Exception as e:
             print("An error occurred:", e)

@@ -67,6 +67,7 @@
 {% endblock %}
 
 {% load static %}
+{% load cache %}
 
 {% block content %}
 <div class="chat-container">
@@ -77,6 +78,8 @@
     {% else %}
     <div class="card-header bg-primary text-white"><a style="color: yellow" href="/chat/login">Login</a>   <a style="color: yellow;" href="/chat/register">Register</a></div>
     {% endif %}
+
+    {% cache 600 chats_cache %}  <!-- 设置缓存时间为600秒 -->
     <div class="card-body messages-box">
       
       <ul class="list-unstyled messages-list">
@@ -116,15 +119,16 @@
         {% endfor %}
         
       </ul>
-      
+       <!-- 锚点 -->
+    <div id="bottom"></div>
     </div>
     <br><br>
     <br><br>
     <br><br>
   </div>
+  {% endcache %}
 
-
-  <form class="message-form" method="post" action="{% url 'handle_message' %} ">
+  <form class="message-form" method="post" action="{% url 'handle_message' %} " onsubmit="refreshPage()">
     {% csrf_token %}
     <div class="input-group">
       <input type="text" class="form-control message-input" name="message" placeholder="Type your message...">
@@ -134,5 +138,67 @@
     </div>
   </form>
 </div>
+
+ <script>
+  const messagesList = document.querySelector('.messages-list');
+  const messageForm = document.querySelector('.message-form');
+  const messageInput = document.querySelector('.message-input');
+
+  messageForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+
+    const message = messageInput.value.trim();
+    if (message.length === 0) {
+      return;
+    }
+
+    const messageItem = document.createElement('li');
+    messageItem.classList.add('message', 'sent');
+    messageItem.innerHTML = `
+        <div class="message-text">
+            <div class="message-sender">
+                <b>{{ user.username }}</b> <!-- 使用模板变量显示当前用户的用户名 -->
+            </div>
+            <div class="message-content">
+                ${message}
+            </div>
+        </div>`;
+    messagesList.appendChild(messageItem);
+
+    messageInput.value = '';
+
+    fetch('{% url "handle_message" %}', {  // 使用Django模板标签获取处理消息的URL
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        'csrfmiddlewaretoken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+        'message': message
+      })
+    })
+      .then(response => response.json())
+      .then(data => {
+        const response = data.response;
+        const messageItem = document.createElement('li');
+        messageItem.classList.add('message', 'received');
+        messageItem.innerHTML = `
+        <div class="message-text">
+            <div class="message-sender">
+              <b>AI Chatbot</b>
+            </div>
+            <div class="message-content">
+                ${response}
+                ${data.image_url ? `<img src="${data.image_url}" alt="Image" class="img">` : ''} <!-- 显示图片 -->
+            </div>
+        </div>
+          `;
+        messagesList.appendChild(messageItem);
+
+        // 滚动到页面底部
+        window.scrollTo(0, document.body.scrollHeight);
+      });
+  });
+
+</script>
+
 
 {% endblock %}
