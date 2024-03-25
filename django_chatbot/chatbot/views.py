@@ -69,15 +69,11 @@ def chatbot(request):
                 t2imag_baidu2ali = response
                 t2imag_ali2zhipu = call_with_messages(t2imag_baidu2ali)
                 image_url = zhipu(t2imag_ali2zhipu)
-                #下载图片内容
-                image_content = requests.get(image_url).content
                 chat = Chat(user=request.user, message=message, response=response, image_url=image_url,created_at=timezone.now())
-                chat.image_content.save(os.path.basename(image_url), ContentFile(image_content)) #将图片信息保存在数据库中
                 chat.save()
                 print("Image URL:", chat.image_url)
                 meta_refresh = '<meta http-equiv="refresh" content="45">'  # 提交表单后自动刷新页面，延迟时间为45秒
-                return render(request, 'chatbot.html', {'chats': chats, 'image_url':chat.image_content.url,'meta_refresh': meta_refresh})
-                # return JsonResponse({'message': message, 'response': response,'image_url':image_url,})
+                return JsonResponse({'message': message, 'response': response,'image_url':image_url,})
             return render(request, 'chatbot.html', {'chats': chats})
         except Exception as e:
             print("An error occurred:", e)

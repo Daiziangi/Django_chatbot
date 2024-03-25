@@ -7,7 +7,6 @@ class Chat(models.Model):
     message = models.TextField()
     response = models.TextField()
     image_url = models.URLField(max_length=200, null=True, blank=True)
-    image_content = models.ImageField(upload_to='generated_images/', blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

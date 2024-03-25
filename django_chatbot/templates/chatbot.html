@@ -60,8 +60,8 @@
       flex-direction: column;
     }
     .img {
-            max-width: 300px; /* 最大宽度为 300px */
-            height: auto; /* 高度自动调整 */
+            max-width: 200px; /* 最大宽度为 300px */
+            height: 200px; /* 高度自动调整 */
         }
   </style>
 {% endblock %}
@@ -87,7 +87,6 @@
         <li class="message sent">
           <div class="message-text">
             <div class="message-sender">
-              <!-- <b>You</b> -->
               <b>{{ chat.user }}</b>
             </div>
             <div class="message-content">
@@ -105,11 +104,10 @@
             </div>
             <div class="message-content">
               {{chat.response}}
-              <img src="{{ chat.image_content.url }}" alt=" testImage">
-              <!-- <img src="{{ MEDIA_URL }}{{ chat.image_url }}" alt="Test Image"> -->
-              <!-- 测试chat.image_url具体值 -->
-              {{ chat.image_content.url }}  
-              <!-- 仍然无效，无法显示图片。  即使把base删光,仍然会在f12中看到原来那些的js代码 -->
+               <!-- 添加条件判断，仅在图片 URL 存在时显示图片 -->
+              {% if chat.image_url %}
+              <img src=" {% url 'proxy_image' chat.image_url %}" alt=" Image" class="img"> 
+              {% endif %}
             </div>
           </div>
         </li>
