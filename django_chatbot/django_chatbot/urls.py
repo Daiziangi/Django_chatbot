@@ -22,7 +22,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('chat/', include('chatbot.urls')),
     path('image/', include('image_proxy.urls')),
-    path('',include('chatbot.urls'))
+    path('',include('chatbot.urls')),
+    path('ancient_light_tools/',include('ancient_light_tools.urls')),
 ]
 
 

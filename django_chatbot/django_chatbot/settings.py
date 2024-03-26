@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'chatbot',
     'image_proxy',
     'corsheaders', #允许跨域访问的APP
+    'ancient_light_tools',
 ]
 
 MIDDLEWARE = [
