@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>古长文分句</title>
+    <title>现代文转古文</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -68,31 +68,31 @@
 <body>
     <div class="navbar">
         <a href="/chat">首页</a>
-        <a href="/ancient_light_tools/modern_to_ancient">现代文转古文</a>
+        <a href="/ancient_light_tools/sentence_split">古长文分句</a>
         <a href="#">联系我们</a>
     </div>
     <div class="container">
-        <h1>古长文分句</h1>
-        <form class="message-form" method="post" action="{% url 'sentence_split' %}" id="sentence-form">
+        <h1>现代文转古文</h1>
+        <form class="message-form" method="post" action="{% url 'modern_to_ancient' %}" id="sentence-form">
             {% csrf_token %}
-            <input type="text" class="message-input" name="original_sentence" id="original_sentence" placeholder="输入需要进行分句的古长文...">
-            <button type="submit" class="btn-send">进行分句</button>
+            <input type="text" class="message-input" name="modern_sentence" id="modern_sentence" placeholder="输入需要转换为古文的现代文...">
+            <button type="submit" class="btn-send">进行转换</button>
         </form>
-        {% if splited_sentence %}
+        {% if ancient_sentence %}
             <div class="result">
-                <h2>分句结果</h2>
-                <p>{{ splited_sentence }}</p>
+                <h2>转换结果</h2>
+                <p>{{ ancient_sentence }}</p>
             </div>
         {% endif %}
     </div>
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            var originalSentenceInput = document.getElementById("original_sentence");
+            var originalSentenceInput = document.getElementById("modern_sentence");
 
             // 保留表单提交后的内容
-            if (localStorage.getItem("original_sentence")) {
-                originalSentenceInput.value = localStorage.getItem("original_sentence");
+            if (localStorage.getItem("modern_sentence")) {
+                originalSentenceInput.value = localStorage.getItem("modern_sentence");
             }
 
             // 当鼠标指向输入框时自动选中输入框内的所有内容
@@ -102,7 +102,7 @@
 
             // 表单提交时保存输入框的内容到本地存储
             document.getElementById("sentence-form").addEventListener("submit", function() {
-                localStorage.setItem("original_sentence", originalSentenceInput.value);
+                localStorage.setItem("modern_sentence", originalSentenceInput.value);
             });
         });
     </script>
