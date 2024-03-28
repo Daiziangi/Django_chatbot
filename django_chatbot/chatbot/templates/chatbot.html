@@ -61,7 +61,7 @@
     }
     .img {
             max-width: 200px; /* 最大宽度为 300px */
-            height: 200px; /* 高度自动调整 */
+            height: auto; /* 高度自动调整 */
         }
   </style>
 {% endblock %}
@@ -72,13 +72,6 @@
 {% block content %}
 <div class="chat-container">
   <div class="card flex-grow-1">
-    <div class="card-header bg-primary text-white">Chat</div>
-    {% if user.is_authenticated %}
-    <div class="card-header bg-primary text-white"><b>Welcome, {{user.username}}</b>   <a style="color: yellow;" href="/chat/logout">Logout</a> <a style="color: yellow;" href="/ancient_light_tools/sentence_split">古长文分句</a></div>
-    {% else %}
-    <div class="card-header bg-primary text-white"><a style="color: yellow" href="/chat/login">Login</a>   <a style="color: yellow;" href="/chat/register">Register</a></div>
-    {% endif %}
-
     {% cache 600 chats_cache %}  <!-- 设置缓存时间为600秒 -->
     <div class="card-body messages-box">
       
@@ -95,8 +88,6 @@
             <div class="message-content">
               {{chat.message}}
             </div>
-            <!-- <div>
-            </div> -->
           </div>
         </li>
 

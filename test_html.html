@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat</title>
+</head>
+<body>
+    <div id="chat">
+        <ul id="messages">
+            <!-- Messages will be displayed here -->
+        </ul>
+        <input type="text" id="message_input" placeholder="Type your message...">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+    <script>
+        function sendMessage() {
+            var messageInput = document.getElementById('message_input');
+            var message = messageInput.value;
+            messageInput.value = '';
+            var messagesList = document.getElementById('messages');
+            messagesList.innerHTML += '<li>You: ' + message + '</li>';
+            // Send message to server
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '/send_message/', true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.send(JSON.stringify({'message': message}));
+        }
+
+        // Poll for new messages every 2 seconds
+        setInterval(getMessages, 2000);
+
+        function getMessages() {
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState == XMLHttpRequest.DONE) {
+                    var response = JSON.parse(xhr.responseText);
+                    var messagesList = document.getElementById('messages');
+                    for (var i = 0; i < response.messages.length; i++) {
+                        messagesList.innerHTML += '<li>Friend: ' + response.messages[i] + '</li>';
+                    }
+                }
+            }
+            xhr.open('GET', '/get_messages/', true);
+            xhr.send();
+        }
+    </script>
+</body>
+</html>

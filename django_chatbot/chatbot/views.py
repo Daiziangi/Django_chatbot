@@ -87,9 +87,13 @@ def chatbot(request):
             return render(request, 'chatbot.html', {'chats': chats})
         except Exception as e:
             print("An error occurred:", e)
-            return render(request,'index.html')
+            return render(request,'login.html')
     else:
-        return render(request,'index.html')
+        return render(request,'login.html')
+
+
+def index(request):
+    return render(request,'index.html')
 
 
 import random
@@ -176,4 +180,4 @@ def register(request):
 
 def logout(request):
     auth.logout(request)
-    return redirect('login')
+    return redirect('index')

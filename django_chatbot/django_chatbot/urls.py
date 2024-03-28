@@ -22,8 +22,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('chat/', include('chatbot.urls')),
     path('image/', include('image_proxy.urls')),
-    path('',include('chatbot.urls')),
+    path('',include('chatbot.urls')), #这里路由重复了,使得两个都可以用
     path('ancient_light_tools/',include('ancient_light_tools.urls')),
+    path('chat_english/',include('chat_english.urls'))
 ]
 
 
