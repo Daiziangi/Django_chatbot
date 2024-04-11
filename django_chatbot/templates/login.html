@@ -13,7 +13,7 @@ Login
                 {% if error_message %}
                 <div class="alert alert-danger" role="alert" style="background-color: #f8d7da; color: #721c24; padding: 10px; margin-bottom: 20px; border: 1px solid #f5c6cb; border-radius: 4px;">{{ error_message }}</div>
                 {% endif %}
-                <form method="post">
+                <form method="post" action="{% url 'login' %}">
                     {% csrf_token %}
                     <div class="form-group" style="margin-bottom: 20px;">
                         <label for="username" style="font-weight: bold; display: block; margin-bottom: 5px;">用户名</label>

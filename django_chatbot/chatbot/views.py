@@ -66,7 +66,7 @@ def get_latest_chats(request):
     else:
         return JsonResponse({'error': 'User not authenticated'})
 
-@cache_page(60) # 缓存整个视图输出，缓存时间为60秒
+# @cache_page(60) # 缓存整个视图输出，缓存时间为60秒
 def chatbot(request):
     if request.user.is_authenticated:
         try:
@@ -82,7 +82,7 @@ def chatbot(request):
                 chat.save()
                 print("Image URL:", chat.image_url)
                 # meta_refresh = '<meta http-equiv="refresh" content="45">'  # 提交表单后自动刷新页面，延迟时间为45秒
-                chats = Chat.objects.filter(user=request.user)
+                # chats = Chat.objects.filter(user=request.user)
                 return JsonResponse({'response': response,'image_url':image_url,}) 
             return render(request, 'chatbot.html', {'chats': chats})
         except Exception as e:
@@ -95,6 +95,9 @@ def chatbot(request):
 def index(request):
     return render(request,'index.html')
 
+
+def test(request):
+    return render(request,'Main.html')
 
 import random
 from http import HTTPStatus
@@ -149,8 +152,9 @@ def login(request):
         password = request.POST['password']
         user = auth.authenticate(request, username=username, password=password)
         if user is not None:
+            auth.logout(request) #先再次清除上次的登录
             auth.login(request, user)
-            return redirect('chatbot')
+            return redirect('chatbot') 
         else:
             error_message = 'Invalid username or password'
             return render(request, 'login.html', {'error_message': error_message})
@@ -168,6 +172,7 @@ def register(request):
             try:
                 user = User.objects.create_user(username, email, password1)
                 user.save()
+                auth.logout(request) #先再次清除上次的登录
                 auth.login(request, user)
                 return redirect('chatbot')
             except:

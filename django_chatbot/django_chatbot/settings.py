@@ -47,7 +47,7 @@ INSTALLED_APPS = [
     'image_proxy',
     'corsheaders', #允许跨域访问的APP
     'ancient_light_tools',
-    'chat_english',
+    # 'chat_english',
 ]
 
 MIDDLEWARE = [

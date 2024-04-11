@@ -17,14 +17,16 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from chatbot.views import index,test
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('chat/', include('chatbot.urls')),
     path('image/', include('image_proxy.urls')),
-    path('',include('chatbot.urls')), #这里路由重复了,使得两个都可以用
+    path('',index,),
+    path('test',test,name='test'),
     path('ancient_light_tools/',include('ancient_light_tools.urls')),
-    path('chat_english/',include('chat_english.urls'))
+    # path('chat_english/',include('chat_english.urls'))
 ]
 
 

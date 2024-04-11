@@ -3,6 +3,11 @@
     <head>
         <meta charset="UTF-8">
         <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+        <script>
+          function add1(){
+            alert(":aaaa");
+          }
+         </script>
         <style>
             .el-header, .el-footer {
               background-color: #B3C0D1;
@@ -54,7 +59,7 @@
                 <el-container style="height: 800px;">
                   <el-aside width="270px" style="border-radius: 1px;">
                         <el-col>
-                            <el-row span="1" style="line-height: 20px; margin-bottom: 10px;"><el-button>新增对话</el-button></el-row>  
+                            <el-row span="1" style="line-height: 20px; margin-bottom: 10px;"><el-button v-model="add1">新增对话</el-button></el-row>  
                             <el-row span="1" style="line-height: 20px; margin-bottom: 10px;"><el-input v-model="input" placeholder="请输入内容"></el-input</el-row></el-row>
                             <el-row span="1" style="line-height: 20px;">
                               <el-menu>
@@ -100,8 +105,43 @@
                 if(this.count<20){
                     this.count+=2
                 }    
+            },
+            add1(){
+              
             }
         }
         })
-  </script>
+   </script>
+   <script>
+     fetch('{% url "handle_message" %}', {  // 使用Django模板标签获取处理消息的URL
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        'csrfmiddlewaretoken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+        'message': message
+      })
+    })
+      .then(response => response.json())
+      .then(data => {
+        const response = data.response;
+        const messageItem = document.createElement('li');
+        messageItem.classList.add('message', 'received');
+        messageItem.innerHTML = `
+        <div class="message-text">
+            <div class="message-sender">
+              <b>AI Chatbot</b>
+            </div>
+            <div class="message-content">
+                ${response}
+                ${data.image_url ? `<img src="${data.image_url}" alt="Image" class="img">` : ''} <!-- 显示图片 -->
+            </div>
+        </div>
+          `;
+        messagesList.appendChild(messageItem);
+
+        // 滚动到页面底部
+        window.scrollTo(0, document.body.scrollHeight);
+      });
+   </script>
+   
 </html>

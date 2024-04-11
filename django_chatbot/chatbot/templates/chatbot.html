@@ -3,6 +3,7 @@
 <style>
     body, html {
       height: 100%;
+      background-color: #FFFFFF !important; /* 将背景色设置为白色 */
     }
 
     .messages-box {
@@ -59,57 +60,75 @@
       display: flex;
       flex-direction: column;
     }
-    .img {
-            max-width: 200px; /* 最大宽度为 300px */
-            height: auto; /* 高度自动调整 */
-        }
+    .message-input:focus {
+    border-color: #007bff; /* 获取焦点时的边框颜色 */
+    outline: none; /* 去除默认的外边框 */
+    }
+    .btn-send:hover {
+    background-color: #0056b3; /* 悬停时的背景色 */
+    border-color: #0056b3; /* 悬停时的边框颜色 */
+    }
   </style>
+
 {% endblock %}
 
 {% load static %}
 {% load cache %}
 
 {% block content %}
-<div class="chat-container">
+<!-- <div class="container"  style="width: 67%;"> -->
+  <div>
+    <br>
+    <br>
+    <br>
+  </div>
+<div class="chat-container" style="background-color:#FFFFFF;">
   <div class="card flex-grow-1">
-    {% cache 600 chats_cache %}  <!-- 设置缓存时间为600秒 -->
-    <div class="card-body messages-box">
+    <!-- {% cache 600 chats_cache %}  设置缓存时间为600秒 -->
+    <div class="card-body messages-box" >
       
-      <ul class="list-unstyled messages-list">
+      <ul class="list-unstyled messages-list" >
 
         {% for chat in chats %}
           {% if chat.user == request.user %}
-
-        <li class="message sent">
-          <div class="message-text">
-            <div class="message-sender">
-              <b>{{ chat.user }}</b>
+          <li class="message sent" style="background-color: #FFFAD1; border-radius: 10px; margin-bottom: 5px; padding: 5px;">
+          <div class="message-text" style="border-radius: 1px; margin-bottom: 5px">
+            <div class="message-sender"  style="font-weight: bold;">
+              {{ chat.user }}
+              <!-- Tomy -->
             </div>
-            <div class="message-content">
+            <div class="message-content" style="padding: 5px; border-radius: 5px; background-color: #FFFAD1; max-width: 30%; margin: 0 auto;">
               {{chat.message}}
             </div>
           </div>
         </li>
-
-        <li class="message received">
-          <div class="message-text">
-            <div class="message-sender">
-              <b>AI Chatbot</b>
+          <li class="message received" style="background-color: #A9E6F4; border-radius: 10px; margin-bottom: 5px; padding: 5px;">
+          <div class="message-text" style="display: flex; flex-direction: column;">
+            <div class="message-sender "style="font-weight: bold;  ">
+              <!-- text-align: center; -->
+              诗心墨灵
             </div>
-            <div class="message-content">
+            <div class="message-content" style="padding: 5px; border-radius: 5px; background-color: #FFFFFF;  display: flex;">
+              <div style="max-width: 70%; margin-right: 10px;"> 
               {{chat.response}}
+              </div>
                <!-- 添加条件判断，仅在图片 URL 存在时显示图片 -->
               {% if chat.image_url %}
-              <img src=" {% url 'proxy_image' chat.image_url %}" alt=" Image" class="img"> 
+              <!-- style="display: block; max-width: 100%; height: auto; margin: 0 auto;" -->
+              <div style="flex-shrink: 0;"> 
+              <img src=" {% url 'proxy_image' chat.image_url %}" alt=" Image" class="img" style="max-width: 100%; max-height: 180px; border-radius: 5px; box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);" > 
+              </div>
               {% endif %}
             </div>
           </div>
         </li>
 
+      
           {% endif %}
         {% endfor %}
         
       </ul>
+    </div>
        <!-- 锚点 -->
     <div id="bottom"></div>
     </div>
@@ -117,20 +136,21 @@
     <br><br>
     <br><br>
   </div>
-  {% endcache %}
+  <!-- {% endcache %} -->
 
-  <form class="message-form" method="post" action="{% url 'handle_message' %} " onsubmit="refreshPage()">
-    {% csrf_token %}
-    <div class="input-group">
-      <input type="text" class="form-control message-input" name="message" placeholder="Type your message...">
-      <div class="input-group-append">
-        <button type="submit" class="btn btn-primary btn-send">发送</button>
-      </div>
-    </div>
-  </form>
-</div>
 
+<form class="message-form" method="post" action="{% url 'handle_message' %}" onsubmit="refreshPage()" style="position: fixed; bottom: 0; width: 100%; padding: 5px; background-color: #F0F0F0; border-radius: 15px;">
+  {% csrf_token %}
+  <div class="input-group" style="display: flex; align-items: center; justify-content: space-between; padding: 5px; border-radius: 15px;">
+    <input type="text" class="form-control message-input" name="message" placeholder="请在此输入..." style="border: none; border-radius: 15px; padding: 10px; background-color: #FFFFFF; font-family: Arial, sans-serif; font-size: 16px; color: #333; box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1); transition: border-color 0.3s ease; flex-grow: 1; width: calc(100% - 120px); white-space: normal;">
+    <button type="submit" class="btn btn-primary btn-send" style="border: none; border-radius: 15px; cursor: pointer; padding: 10px 20px; background-color: #3498DB; color: #FFFFFF;">发送</button>
+  </div>
+</form>
+
+  
+  <!-- </div> -->
  <script>
+
   const messagesList = document.querySelector('.messages-list');
   const messageForm = document.querySelector('.message-form');
   const messageInput = document.querySelector('.message-input');
@@ -145,12 +165,16 @@
 
     const messageItem = document.createElement('li');
     messageItem.classList.add('message', 'sent');
+    messageItem.style.backgroundColor = '#FFFAD1'; // 设置背景色
+    messageItem.style.borderRadius = '10px'; // 设置边框圆角
+    messageItem.style.marginBottom = '5px'; // 设置底部间距
+    messageItem.style.padding = '5px'; // 设置内边距
     messageItem.innerHTML = `
-        <div class="message-text">
-            <div class="message-sender">
+        <div class="message-text" style="border-radius: 1px; margin-bottom: 5px ">
+            <div class="message-sender" style="font-weight: bold;" >
                 <b>{{ user.username }}</b> <!-- 使用模板变量显示当前用户的用户名 -->
             </div>
-            <div class="message-content">
+            <div class="message-content" style="padding: 5px; border-radius: 5px; background-color: #FFFAD1; max-width: 30%; margin: 0 auto;">
                 ${message}
             </div>
         </div>`;
@@ -171,14 +195,20 @@
         const response = data.response;
         const messageItem = document.createElement('li');
         messageItem.classList.add('message', 'received');
+        messageItem.style.backgroundColor = '#A9E6F4'; // 设置背景色
+        messageItem.style.borderRadius = '10px'; // 设置边框圆角
+        messageItem.style.marginBottom = '5px'; // 设置底部间距
+        messageItem.style.padding = '5px'; // 设置内边距
         messageItem.innerHTML = `
-        <div class="message-text">
-            <div class="message-sender">
-              <b>AI Chatbot</b>
+        <div class="message-text" style="display: flex; flex-direction: column;">
+            <div class="message-sender" style="font-weight: bold;">
+              <b>诗心墨灵</b>
             </div>
-            <div class="message-content">
-                ${response}
-                ${data.image_url ? `<img src="${data.image_url}" alt="Image" class="img">` : ''} <!-- 显示图片 -->
+            <div class="message-content"  style="padding: 5px; border-radius: 5px; background-color: #FFFFFF; display: flex;">
+              <div style="max-width: 70%; margin-right: 10px;"> 
+              ${response}
+              </div>
+                ${data.image_url ? `<div style="flex-shrink: 0;"><img src="${data.image_url}" alt="Image" class="img" style="max-width: 100%; max-height: 180px; border-radius: 5px; box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);"></div>` : ''} <!-- 显示图片 -->
             </div>
         </div>
           `;
@@ -188,7 +218,11 @@
         window.scrollTo(0, document.body.scrollHeight);
       });
   });
-
+// 在页面加载完成后自动滚动到底部
+window.onload = function() {
+    var bottom = document.getElementById('bottom');
+    bottom.scrollIntoView();
+  };
 </script>
 
 
